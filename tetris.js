@@ -16,8 +16,9 @@ function arenaSweep() {
         arena.unshift(row);
         ++y;
 
-        player.score += rowCount * 10;
-        rowCount *= 2;
+        player.score += 3;
+        score = player.score;
+        rowCount *= 1;
     }
 }
 
@@ -146,10 +147,12 @@ function playerDrop() {
     player.pos.y++;
     if (collide(arena, player)) {
         player.pos.y--;
-        merge(arena, player);
-        playerReset();
-        arenaSweep();
-        updateScore();
+       merge(arena, player);
+        stopOrNot();
+arenaSweep();
+updateScore();
+        
+        
     }
     dropCounter = 0;
 }
@@ -160,25 +163,27 @@ function playerMove(offset) {
         player.pos.x -= offset;
     }
 }
-
-function playerReset() {
-    const pieces = 'TJLOSZI';
-    player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
-    player.pos.y = 0;
-    player.pos.x = (arena[0].length / 2 | 0) -
-                   (player.matrix[0].length / 2 | 0);
-    if (collide(arena, player)) {
-        arena.forEach(row => row.fill(0));
-        
-        
-        alert("No room for new block. Game over.");
-        //break;
-        exit();
+function stopOrNot(){
+    if(!(collide(arena,player)&& player.pos.y ==0) ){
+        if (player.score < 500){
+        playerReset();}
 
     }
 }
 
 
+function playerReset() {
+    
+    const pieces = 'TJLOSZI';
+
+    player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+    player.pos.y = 0;
+    player.pos.x = (arena[0].length / 2 | 0) -
+                   (player.matrix[0].length / 2 | 0);
+     
+
+
+}  
 function playerRotate(dir) {
     const pos = player.pos.x;
     let offset = 1;
@@ -214,11 +219,7 @@ function update(time = 0) {
 
 function updateScore() {
     document.getElementById('score').innerText = player.score;
-    if(player.score>=500){
-
-        exit();
-        alert("You won");
-    }
+    
 }
 
 document.addEventListener('keydown', event => {
@@ -244,7 +245,7 @@ const colors = [
     '#3877FF',
 ];
 
-const arena = createMatrix(12, 20);
+const arena = createMatrix(20, 20);
 
 const player = {
     pos: {x: 0, y: 0},
@@ -252,11 +253,14 @@ const player = {
     score: 0,
 };
 
-
-
-
 playerReset();
 
 updateScore();
 
+
+
+
 update();
+
+
+}
